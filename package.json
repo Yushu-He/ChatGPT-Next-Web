@@ -90,6 +90,9 @@
     "watch": "^1.0.2",
     "webpack": "^5.88.1"
   },
+  "engines": {
+    "node": "24.x"
+  },
   "resolutions": {
     "lint-staged/yaml": "^2.2.2"
   },
