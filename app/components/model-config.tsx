@@ -1,4 +1,4 @@
-import { ServiceProvider } from "@/app/constant";
+import { ServiceProvider, SUMMARIZE_MODEL } from "@/app/constant";
 import { ModalConfigValidator, ModelConfig } from "../store";
 
 import Locale from "../locales";
@@ -19,7 +19,9 @@ export function ModelConfigList(props: {
     "provider.providerName",
   );
   const value = `${props.modelConfig.model}@${props.modelConfig?.providerName}`;
-  const compressModelValue = `${props.modelConfig.compressModel}@${props.modelConfig?.compressProviderName}`;
+  const compressModelValue = props.modelConfig.compressModel
+    ? `${props.modelConfig.compressModel}@${props.modelConfig?.compressProviderName}`
+    : "";
 
   return (
     <>
@@ -250,15 +252,22 @@ export function ModelConfigList(props: {
           aria-label={Locale.Settings.CompressModel.Title}
           value={compressModelValue}
           onChange={(e) => {
-            const [model, providerName] = getModelProvider(
-              e.currentTarget.value,
-            );
-            props.updateConfig((config) => {
-              config.compressModel = ModalConfigValidator.model(model);
-              config.compressProviderName = providerName as ServiceProvider;
-            });
+            const val = e.currentTarget.value;
+            if (val === "") {
+              props.updateConfig((config) => {
+                config.compressModel = "";
+                config.compressProviderName = "" as ServiceProvider;
+              });
+            } else {
+              const [model, providerName] = getModelProvider(val);
+              props.updateConfig((config) => {
+                config.compressModel = ModalConfigValidator.model(model);
+                config.compressProviderName = providerName as ServiceProvider;
+              });
+            }
           }}
         >
+          <option value="">Auto ({SUMMARIZE_MODEL})</option>
           {allModels
             .filter((v) => v.available)
             .map((v, i) => (
